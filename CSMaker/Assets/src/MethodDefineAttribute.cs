@@ -1,7 +1,10 @@
-public enum MethodDefineAttribute
+namespace src
 {
-    None,
-    Abstract,
-    Override,
-    Static
+    public enum MethodDefineAttribute
+    {
+        None,
+        Abstract,
+        Override,
+        Static
+    }
 }

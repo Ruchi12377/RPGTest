@@ -8,10 +8,17 @@ public class Main : MonoBehaviour
     private async void Start()
     {
         var target = new Class(new List<string>(), "Sample", CSIAccessAttribute.Public,
-            ClassDefineAttribute.None, "SampleClass", new List<ClassField>());
+            ClassDefineAttribute.None, "SampleClass", new List<ClassField>(), new List<Method>());
 
         target.AddClassField(new ClassField(AccessAttribute.Public,
             ClassFieldAttribute.Const, "string", typeof(string), "aaa", "\"Sample\""));
+        target.AddMethodField(new Method(AccessAttribute.Public, MethodDefineAttribute.None, "void", typeof(Void),
+            "Start", new List<MethodField>()
+            {
+                new MethodField("string", typeof(string), "test", "\"Default\""),
+                new MethodField("string", typeof(string), "test2", ""),
+                new MethodField("int", typeof(int), "test33", "0")
+            }));
         var data = target.Generate();
 
         var path = Application.dataPath + "/Test.cs";
@@ -21,4 +28,3 @@ public class Main : MonoBehaviour
         await FileIO.Write(path, data);
     }
 }
-    

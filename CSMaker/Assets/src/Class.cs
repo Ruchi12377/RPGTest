@@ -10,8 +10,9 @@ namespace src
         public ClassDefineAttribute DefineAttribute;
         public string ClassName;
         public List<ClassField> Fields;
+        public List<Method> Methods;
 
-        public Class(IEnumerable<string> usingTable, string nameSpace, CSIAccessAttribute accessAttribute, ClassDefineAttribute defineAttribute, string className, List<ClassField> fields)
+        public Class(IEnumerable<string> usingTable, string nameSpace, CSIAccessAttribute accessAttribute, ClassDefineAttribute defineAttribute, string className, List<ClassField> fields, List<Method> methods)
         {
             UsingTable = usingTable;
             NameSpace = nameSpace;
@@ -19,6 +20,7 @@ namespace src
             DefineAttribute = defineAttribute;
             ClassName = className;
             Fields = fields;
+            Methods = methods;
         }
     }
 }

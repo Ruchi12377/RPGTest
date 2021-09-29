@@ -33,13 +33,13 @@ namespace src
 
             csBuilder.AppendLine($"{accessAttributeStr} {defineAttributeStr}class {target.ClassName}");
             csBuilder.AppendLine("{");
-            
+
             //Field関連
             foreach (var field in target.Fields)
             {
                 //using一覧に使用すると思われるusingを入れる
                 usingTable.Add(field.FieldType.Namespace);
-                
+
                 var fieldAccessAttribute = field.AccessAttribute._ToString();
 
                 var classFieldAttribute = field.ClassFieldAttribute._ToString();
@@ -47,20 +47,54 @@ namespace src
                 classFieldAttribute = classFieldAttribute.IsNullOrEmptyOrWhiteSpace() ? "" : classFieldAttribute + " ";
 
                 var defaultValue = field.DefaultValue;
-                if ((field.ClassFieldAttribute == ClassFieldAttribute.Const || field.ClassFieldAttribute == ClassFieldAttribute.StaticReadOnly) && defaultValue.IsNullOrEmptyOrWhiteSpace())
+                if ((field.ClassFieldAttribute == ClassFieldAttribute.Const ||
+                     field.ClassFieldAttribute == ClassFieldAttribute.StaticReadOnly) &&
+                    defaultValue.IsNullOrEmptyOrWhiteSpace())
                 {
                     Debug.LogError("フィールドはconstまたはstatic readonly キーワードがついていますが、初期値が設定されていません。");
                 }
 
                 defaultValue = defaultValue.IsNullOrEmptyOrWhiteSpace() ? "" : $" = {defaultValue}";
-                
+
                 csBuilder.AppendLine(
                     $"{fieldAccessAttribute} {classFieldAttribute}{field.FieldTypeName} {field.FieldName}{defaultValue};");
             }
 
             //Method関連
-            
-            
+            foreach (var method in target.Methods)
+            {
+                //using一覧に使用すると思われるusingを入れる
+                usingTable.Add(method.MethodType.Namespace);
+
+                var defineAttribute = method.MethodDefineAttribute._ToString();
+                defineAttribute = defineAttribute.IsNullOrEmptyOrWhiteSpace() ? "" : defineAttribute + " ";
+
+                //引数
+                var methodParams = new StringBuilder();
+
+                var fields = method.MethodField.OrderBy(x => x.DefaultValue.IsNullOrEmptyOrWhiteSpace() == false)
+                    .ToList();
+                for (var i = 0; i < fields.Count; i++)
+                {
+                    var field = fields[i];
+                    
+                    //using一覧に使用すると思われるusingを入れる
+                    usingTable.Add(field.FieldType.Namespace);
+
+                    var defaultValue = field.DefaultValue;
+                    defaultValue = defaultValue.IsNullOrEmptyOrWhiteSpace() ? "" : $" = {defaultValue}";
+
+                    var comma = fields.Count > 0 && i < fields.Count - 1 ? ", " : "";
+                    methodParams.Append($"{field.FieldTypeName} {field.FieldName}{defaultValue}{comma}");
+                }
+
+                csBuilder.AppendLine(
+                    $"{method.AccessAttribute._ToString()} {defineAttribute}{method.MethodTypeName} {method.MethodName}({methodParams})");
+                csBuilder.AppendLine("{");
+                csBuilder.AppendLine("");
+                csBuilder.AppendLine("}");
+            }
+
             //Using関連
             //フィールドとの被りもあるので、被りを消してから、最後にまとめて追加する
             usingTable.AddRange(target.UsingTable);
@@ -71,6 +105,7 @@ namespace src
                     nameSpaceBuilder.AppendLine($"using {u};");
                 }
             }
+
             //UsingとNameSpaceとの間の一行
             if (target.UsingTable.Any())
             {
@@ -92,6 +127,11 @@ namespace src
         public static void AddClassField(this Class target, ClassField field)
         {
             target.Fields.Add(field);
+        }
+
+        public static void AddMethodField(this Class target, Method method)
+        {
+            target.Methods.Add(method);
         }
 
         //Getter Setter
