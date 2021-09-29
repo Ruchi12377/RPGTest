@@ -1,18 +1,24 @@
+using System;
+
 namespace src
 {
     public struct ClassField
     {
-        public ClassFieldAccessAttribute FieldAccessAttribute;
+        public AccessAttribute AccessAttribute;
         public ClassFieldAttribute ClassFieldAttribute;
-        public string FieldType;
+        public string FieldTypeName;
+        public Type FieldType;
         public string FieldName;
+        public string DefaultValue;
 
-        public ClassField(ClassFieldAccessAttribute fieldAccessAttribute, ClassFieldAttribute classFieldAttribute, string fieldType, string fieldName)
+        public ClassField(AccessAttribute accessAttribute, ClassFieldAttribute classFieldAttribute, string fieldTypeName, Type fieldType, string fieldName, string defaultValue)
         {
-            FieldAccessAttribute = fieldAccessAttribute;
+            AccessAttribute = accessAttribute;
             ClassFieldAttribute = classFieldAttribute;
+            FieldTypeName = fieldTypeName;
             FieldType = fieldType;
             FieldName = fieldName;
+            DefaultValue = defaultValue;
         }
     }
 }

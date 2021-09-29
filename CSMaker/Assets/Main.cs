@@ -7,11 +7,11 @@ public class Main : MonoBehaviour
 {
     private async void Start()
     {
-        var target = new Class(new[] { typeof(List<int>).Namespace }, "Sample", CSIAccessAttribute.Public,
+        var target = new Class(new List<string>(), "Sample", CSIAccessAttribute.Public,
             ClassDefineAttribute.None, "SampleClass", new List<ClassField>());
-        
-        target.AddClassField(new ClassField(ClassFieldAccessAttribute.Public,
-                    ClassFieldAttribute.Static, "List<int>", "aaa"));
+
+        target.AddClassField(new ClassField(AccessAttribute.Public,
+            ClassFieldAttribute.Const, "string", typeof(string), "aaa", "\"Sample\""));
         var data = target.Generate();
 
         var path = Application.dataPath + "/Test.cs";

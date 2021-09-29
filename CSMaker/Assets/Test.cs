@@ -1,9 +1,12 @@
-﻿using System.Collections.Generic;
-
-namespace Sample
+﻿namespace Sample
 {
 public class SampleClass
 {
-public static List<int> aaa;
+public const string aaa = "Sample";
+
+public static void A()
+{
+    
+}
 }
 }

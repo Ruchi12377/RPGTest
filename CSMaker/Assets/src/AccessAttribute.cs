@@ -1,6 +1,6 @@
 namespace src
 {
-    public enum ClassFieldAccessAttribute
+    public enum AccessAttribute
     {
         Public,
         Protected,

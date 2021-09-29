@@ -1,4 +1,7 @@
+using System.Collections.Generic;
+using System.Linq;
 using System.Text;
+using UnityEngine;
 
 namespace src
 {
@@ -10,22 +13,10 @@ namespace src
         //クラスを生成する関数
         public static string Generate(this Class target)
         {
-            //ここから本番のコード
-            //-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-
-            
+            var nameSpaceBuilder = new StringBuilder();
             var csBuilder = new StringBuilder();
 
-            //Using関連
-            foreach (var u in target.UsingTable)
-            {
-                if (u.IsNullOrEmptyOrWhiteSpace() == false)
-                {
-                    csBuilder.AppendLine($"using {u};");
-                }
-            }
-            //UsingとNameSpaceとの間の一行
-            csBuilder.AppendLine("");
-
+            var usingTable = new List<string>();
             //NameSpace関連
             var hasNameSpace = target.NameSpace.IsNullOrEmptyOrWhiteSpace() == false;
             if (hasNameSpace)
@@ -35,22 +26,9 @@ namespace src
             }
 
             //Class定義関連
-            var accessAttributeStr = target.AccessAttribute switch
-            {
-                CSIAccessAttribute.Public => "public",
-                CSIAccessAttribute.Private => "private",
-                CSIAccessAttribute.Internal => "internal",
-                _ => ""
-            };
-            
-            var defineAttributeStr = target.DefineAttribute switch
-            {
-                ClassDefineAttribute.None => "",
-                ClassDefineAttribute.Abstract => "abstract",
-                ClassDefineAttribute.Sealed => "sealed",
-                ClassDefineAttribute.Static => "static",
-                _ => ""
-            };
+            var accessAttributeStr = target.AccessAttribute._ToString();
+
+            var defineAttributeStr = target.DefineAttribute._ToString();
             defineAttributeStr = defineAttributeStr.IsNullOrEmptyOrWhiteSpace() ? "" : defineAttributeStr + " ";
 
             csBuilder.AppendLine($"{accessAttributeStr} {defineAttributeStr}class {target.ClassName}");
@@ -59,31 +37,44 @@ namespace src
             //Field関連
             foreach (var field in target.Fields)
             {
-                var fieldAccessAttribute = field.FieldAccessAttribute switch
-                {
-                    ClassFieldAccessAttribute.Public => "public",
-                    ClassFieldAccessAttribute.Protected => "protected",
-                    ClassFieldAccessAttribute.Private => "private",
-                    ClassFieldAccessAttribute.Internal => "internal",
-                    ClassFieldAccessAttribute.ProtectedInternal => "protected internal",
-                    ClassFieldAccessAttribute.PrivateProtected => "private protected",
-                    _ => ""
-                };
+                //using一覧に使用すると思われるusingを入れる
+                usingTable.Add(field.FieldType.Namespace);
                 
-                var classFieldAttribute = field.ClassFieldAttribute switch
-                {
-                    ClassFieldAttribute.None => "",
-                    ClassFieldAttribute.Static => "static",
-                    ClassFieldAttribute.Const => "const",
-                    ClassFieldAttribute.Readonly => "readonly",
-                    ClassFieldAttribute.StaticReadOnly => "static readonly",
-                    _ => ""
-                };
-                
+                var fieldAccessAttribute = field.AccessAttribute._ToString();
+
+                var classFieldAttribute = field.ClassFieldAttribute._ToString();
+
                 classFieldAttribute = classFieldAttribute.IsNullOrEmptyOrWhiteSpace() ? "" : classFieldAttribute + " ";
 
+                var defaultValue = field.DefaultValue;
+                if ((field.ClassFieldAttribute == ClassFieldAttribute.Const || field.ClassFieldAttribute == ClassFieldAttribute.StaticReadOnly) && defaultValue.IsNullOrEmptyOrWhiteSpace())
+                {
+                    Debug.LogError("フィールドはconstまたはstatic readonly キーワードがついていますが、初期値が設定されていません。");
+                }
+
+                defaultValue = defaultValue.IsNullOrEmptyOrWhiteSpace() ? "" : $" = {defaultValue}";
+                
                 csBuilder.AppendLine(
-                    $"{fieldAccessAttribute} {classFieldAttribute}{field.FieldType} {field.FieldName};");
+                    $"{fieldAccessAttribute} {classFieldAttribute}{field.FieldTypeName} {field.FieldName}{defaultValue};");
+            }
+
+            //Method関連
+            
+            
+            //Using関連
+            //フィールドとの被りもあるので、被りを消してから、最後にまとめて追加する
+            usingTable.AddRange(target.UsingTable);
+            foreach (var u in usingTable.Distinct())
+            {
+                if (u.IsNullOrEmptyOrWhiteSpace() == false)
+                {
+                    nameSpaceBuilder.AppendLine($"using {u};");
+                }
+            }
+            //UsingとNameSpaceとの間の一行
+            if (target.UsingTable.Any())
+            {
+                nameSpaceBuilder.AppendLine("");
             }
 
             //最後に中括弧をつける
@@ -95,8 +86,7 @@ namespace src
                 csBuilder.AppendLine("}");
             }
 
-            //-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-
-            return csBuilder.ToString();
+            return nameSpaceBuilder + csBuilder.ToString();
         }
 
         public static void AddClassField(this Class target, ClassField field)

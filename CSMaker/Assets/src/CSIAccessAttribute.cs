@@ -5,6 +5,7 @@
 //クラスのアクセス範囲を設定する
 namespace src
 {
+    // ReSharper disable once InconsistentNaming
     public enum CSIAccessAttribute
     {
         Public,
