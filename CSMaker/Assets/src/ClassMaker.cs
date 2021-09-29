@@ -1,8 +1,4 @@
-using System;
-using System.Collections.Generic;
-using System.IO;
 using System.Text;
-using UnityEngine;
 
 namespace src
 {
@@ -27,6 +23,8 @@ namespace src
                     csBuilder.AppendLine($"using {u};");
                 }
             }
+            //UsingとNameSpaceとの間の一行
+            csBuilder.AppendLine("");
 
             //NameSpace関連
             var hasNameSpace = target.NameSpace.IsNullOrEmptyOrWhiteSpace() == false;
@@ -100,92 +98,13 @@ namespace src
             //-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-
             return csBuilder.ToString();
         }
-        
-        public struct Class
-        {
-            public IEnumerable<string> UsingTable;
-            public string NameSpace;
-            public CSIAccessAttribute AccessAttribute;
-            public ClassDefineAttribute DefineAttribute;
-            public string ClassName;
-            public IEnumerable<ClassField> Fields;
 
-            public Class(IEnumerable<string> usingTable, string nameSpace, CSIAccessAttribute accessAttribute, ClassDefineAttribute defineAttribute, string className, IEnumerable<ClassField> fields)
-            {
-                UsingTable = usingTable;
-                NameSpace = nameSpace;
-                AccessAttribute = accessAttribute;
-                DefineAttribute = defineAttribute;
-                ClassName = className;
-                Fields = fields;
-            }
-        }
-        
-        public struct ClassField
+        public static void AddClassField(this Class target, ClassField field)
         {
-            public ClassFieldAccessAttribute FieldAccessAttribute;
-            public ClassFieldAttribute ClassFieldAttribute;
-            public string FieldType;
-            public string FieldName;
-
-            public ClassField(ClassFieldAccessAttribute fieldAccessAttribute, ClassFieldAttribute classFieldAttribute, string fieldType, string fieldName)
-            {
-                FieldAccessAttribute = fieldAccessAttribute;
-                ClassFieldAttribute = classFieldAttribute;
-                FieldType = fieldType;
-                FieldName = fieldName;
-            }
+            target.Fields.Add(field);
         }
 
-        public enum ClassFieldAccessAttribute
-        {
-            Public,
-            Protected,
-            Private,
-            Internal,
-
-            ProtectedInternal,
-            PrivateProtected,
-        }
-        
-        public enum ClassFieldAttribute
-        {
-            None,
-            Static,
-            Const,
-            Readonly,
-            StaticReadOnly
-        }
-        
-        public enum StructFieldAccessAttribute
-        {
-            Public,
-            Private,
-            Internal,
-        }
-        
         //Getter Setter
         //継承
-        
-        //C lass
-        //S truct
-        //I nterface
-        // ReSharper disable once InconsistentNaming
-        //クラスのアクセス範囲を設定する
-        public enum CSIAccessAttribute
-        {
-            Public,
-            Private,
-            Internal,
-        };
-
-        //クラスの宣言を設定する
-        public enum ClassDefineAttribute
-        {
-            None,
-            Abstract,
-            Sealed,
-            Static
-        };
     }
 }
