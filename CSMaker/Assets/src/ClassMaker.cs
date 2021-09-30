@@ -129,9 +129,24 @@ namespace src
             target.Fields.Add(field);
         }
 
-        public static void AddMethodField(this Class target, Method method)
+        public static void AddMethod(this Class target, Method method)
         {
             target.Methods.Add(method);
+        }
+        
+        public static void AddRangeClassFields(this Class target, IEnumerable<ClassField> fields)
+        {
+            target.Fields.AddRange(fields);
+        }
+
+        public static void AddRangeMethods(this Class target, IEnumerable<Method> methods)
+        {
+            target.Methods.AddRange(methods);
+        }
+        
+        public static void AddRangeMethodField(this Method method, IEnumerable<MethodField> methodFields)
+        {
+            method.MethodField.AddRange(methodFields);
         }
 
         //Getter Setter

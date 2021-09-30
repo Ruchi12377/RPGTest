@@ -1,7 +1,9 @@
+using System;
 using System.Collections.Generic;
 
 namespace src
 {
+    [Serializable]
     public struct Class
     {
         public IEnumerable<string> UsingTable;
