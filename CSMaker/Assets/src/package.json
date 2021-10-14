@@ -1,0 +1,17 @@
+{
+    "name": "com.ruchi.csMaker",
+    "displayName": "csMaker",
+    "version": "1.0.0",
+    "unity": "2020.3",
+    "description": "Package for creating a script from a script",
+    "keywords": [
+        "maker"
+    ],
+    "category": "",
+    "dependencies": {},
+    "author": {
+        "name": "Unity",
+        "email": "unity@example.com",
+        "url": "https://www.unity3d.com"
+    }
+}

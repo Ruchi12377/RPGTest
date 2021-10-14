@@ -1,3 +1,4 @@
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
@@ -64,7 +65,10 @@ namespace src
             foreach (var method in target.Methods)
             {
                 //using一覧に使用すると思われるusingを入れる
-                usingTable.Add(method.MethodType.Namespace);
+                if (method.MethodType != typeof(void))
+                {
+                    usingTable.Add(method.MethodType.Namespace);
+                }
 
                 var defineAttribute = method.MethodDefineAttribute._ToString();
                 defineAttribute = defineAttribute.IsNullOrEmptyOrWhiteSpace() ? "" : defineAttribute + " ";
@@ -98,16 +102,15 @@ namespace src
             //Using関連
             //フィールドとの被りもあるので、被りを消してから、最後にまとめて追加する
             usingTable.AddRange(target.UsingTable);
-            foreach (var u in usingTable.Distinct())
+            usingTable = usingTable.Distinct().ToList();
+            foreach (var u in usingTable.Where(u => u.IsNullOrEmptyOrWhiteSpace() == false))
             {
-                if (u.IsNullOrEmptyOrWhiteSpace() == false)
-                {
-                    nameSpaceBuilder.AppendLine($"using {u};");
-                }
+                nameSpaceBuilder.AppendLine($"using {u};");
             }
 
-            //UsingとNameSpaceとの間の一行
-            if (target.UsingTable.Any())
+            //NameSpaceが一つでも存在するなら、
+            //UsingとNameSpaceとの間の一行を開ける
+            if (usingTable.Count > 0)
             {
                 nameSpaceBuilder.AppendLine("");
             }
@@ -122,6 +125,11 @@ namespace src
             }
 
             return nameSpaceBuilder + csBuilder.ToString();
+        }
+
+        public static void AddInheritanceInterface(this Class target, Type @interface)
+        {
+            target.InheritanceInterfaces.Add(@interface);
         }
 
         public static void AddClassField(this Class target, ClassField field)

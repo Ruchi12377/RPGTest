@@ -1,6 +1,6 @@
 namespace src
 {
-    public struct Void
+    public readonly struct Void
     {
     }
 }
