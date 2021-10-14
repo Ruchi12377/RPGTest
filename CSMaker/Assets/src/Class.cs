@@ -3,6 +3,7 @@ using System.Collections.Generic;
 
 namespace src
 {
+    [Serializable]
     public struct Class
     {
         public List<string> UsingTable;

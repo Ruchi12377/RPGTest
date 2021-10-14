@@ -3,6 +3,7 @@ using System.Collections.Generic;
 
 namespace src
 {
+    [Serializable]
     public struct Method
     {
         public AccessAttribute AccessAttribute;
@@ -10,10 +11,10 @@ namespace src
         public string MethodTypeName;
         public Type MethodType;
         public string MethodName;
-        public IEnumerable<MethodField> MethodField;
+        public List<MethodField> MethodField;
 
 
-        public Method(AccessAttribute accessAttribute, MethodDefineAttribute methodDefineAttribute, string methodTypeName, Type methodType, string methodName, IEnumerable<MethodField> methodField)
+        public Method(AccessAttribute accessAttribute, MethodDefineAttribute methodDefineAttribute, string methodTypeName, Type methodType, string methodName, List<MethodField> methodField)
         {
             AccessAttribute = accessAttribute;
             MethodDefineAttribute = methodDefineAttribute;

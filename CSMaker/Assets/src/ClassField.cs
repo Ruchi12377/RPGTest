@@ -2,6 +2,7 @@ using System;
 
 namespace src
 {
+    [Serializable]
     public struct ClassField
     {
         public AccessAttribute AccessAttribute;

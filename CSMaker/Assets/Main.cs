@@ -12,7 +12,7 @@ public class Main : MonoBehaviour
 
         target.AddClassField(new ClassField(AccessAttribute.Public,
             ClassFieldAttribute.Const, "string", typeof(string), "aaa", "\"Sample\""));
-        target.AddMethodField(new Method(AccessAttribute.Public, MethodDefineAttribute.None, "void", typeof(Void),
+        target.AddMethod(new Method(AccessAttribute.Public, MethodDefineAttribute.None, "void", typeof(Void),
             "Start", new List<MethodField>()
             {
                 new MethodField("string", typeof(string), "test", "\"Default\""),
